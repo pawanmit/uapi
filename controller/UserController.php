@@ -7,9 +7,9 @@ class UserController {
 
     public function create() {
         $user = new User();
-        $user->lastName = 'mittal';
-        $user->firstName = 'pawan';
-        $user->login = "pmittal";
+        $user->lastName['value'] = 'mittal';
+        $user->firstName['value'] = 'pawan';
+        $user->login['value'] = "pmittal";
         $user->inputFields = array('lastName', 'firstName', 'login');
         $user->create();
     }

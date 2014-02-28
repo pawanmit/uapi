@@ -14,6 +14,12 @@ class MySqlConnection {
         //echo self::$mysqli->host_info . "\n";
     }//construct
 
+    public function execute($sql, $bindParam) {
+        print_r($sql . "<BR>");
+        $statement = $this->prepareStatement($sql);
+        $this->bindAndExecute($statement, $bindParam);
+    }
+
     private static function createMySqlConnection() {
             $dbCondig = Database::getDatabaseConfig();
             $host = $dbCondig['host'];
@@ -29,11 +35,26 @@ class MySqlConnection {
         self::$mysqli = $mysqli;
     }
 
-    public function prepare($sql) {
+    /**
+     * Creates a Mysql Prepared Statement
+     * @param $sql
+     * @throws Exception
+     */
+    private function prepareStatement($sql) {
         $preparedStatement = null;
         if (!($preparedStatement = self::$mysqli->prepare($sql))) {
             error_log("Prepare failed: (" . self::$mysqli->errno . ") " . self::$mysqli->error);
             throw new Exception("Invalid sql." . $sql);
         }
+        return $preparedStatement;
     }
+
+    private function bindAndExecute($statement, $bindParam) {
+        call_user_func_array( array($statement, 'bind_param'), $bindParam->get());
+        if (!$statement->execute()) {
+            echo "Execute failed: (" . $statement->errno . ") " . $statement->error;
+        }
+    }
+
+
 }

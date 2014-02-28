@@ -1,12 +1,12 @@
 <?php
 
-require_once 'MySqlConnection.php';
+require_once 'MySqliHelper.php';
 
 class Model {
 
     const SINGLE_QUOTE = "'";
 
-    protected $tableName;
+    public $tableName;
 
     //List of fields for SELECT clause
     public $selectFields = array();
@@ -19,13 +19,15 @@ class Model {
 
     private static $dbConnection;
 
+    private static $mySqliHelper;
+
     function __construct() {
-        self::$dbConnection = new MySqlConnection();
+        self::$mySqliHelper = new MySqliHelper();
     }
 
     //Saves the model object
     public function create() {
-        $this->getInsertPreparedStatement();
+        self::$mySqliHelper->insert($this);
     }
 
     //Updates the model object based on $filterFields and sets the value to $inputFields
@@ -43,28 +45,4 @@ class Model {
 
     }
 
-
-    private function getInsertPreparedStatement() {
-        $sql = "INSERT INTO " . $this->tableName;
-        $columnsCsv = "";
-        $valuesCsv = "";
-        foreach($this->inputFields as $inputField) {
-            $columnsCsv .= $this->camelCaseToUnderScore($inputField) . ",";
-            $valuesCsv .=  "?" . ",";
-        }
-        $columnsCsv = rtrim(trim($columnsCsv, ','));
-        $valuesCsv =  rtrim($valuesCsv, ',');
-        $sql .= "(" . $columnsCsv . ")" . " VALUES " . "(" . $valuesCsv . ")";
-        $preparedStatement = self::$dbConnection->prepare($sql);
-        return $preparedStatement;
-    }
-
-    private function camelCaseToUnderScore($input) {
-        preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $input, $matches);
-        $ret = $matches[0];
-        foreach ($ret as &$match) {
-            $match = $match == strtoupper($match) ? strtolower($match) : lcfirst($match);
-        }
-        return implode('_', $ret);
-    }
 } //class
