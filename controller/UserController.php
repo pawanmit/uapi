@@ -1,5 +1,6 @@
 <?php
 
+require_once '../app/config/Application.php';
 require_once '../model/User.php';
 
 class UserController {
@@ -9,10 +10,15 @@ class UserController {
         $user->lastName = 'mittal';
         $user->firstName = 'pawan';
         $user->login = "pmittal";
-        $user->inputFields('lastName', 'firstName', 'login');
+        $user->inputFields = array('lastName', 'firstName', 'login');
         $user->create();
     }
 }
 
 
-$this->create();
+$userController = new UserController();
+try {
+    $userController->create();
+}catch (Exception $e) {
+    echo $e->getMessage();
+}

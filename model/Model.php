@@ -1,15 +1,10 @@
 <?php
 
-require_once 'Connection.php';
+require_once 'MySqlConnection.php';
 
 class Model {
 
-    private static $dbConnection;
-
-    function __construct() {
-        $connection = new Connection();
-        self::$dbConnection = $connection->getDatabaseConnection();
-    }
+    const SINGLE_QUOTE = "'";
 
     protected $tableName;
 
@@ -22,10 +17,15 @@ class Model {
     //List of fields for WHERE clause
     public $filterFields = array();
 
+    private static $dbConnection;
+
+    function __construct() {
+        self::$dbConnection = new MySqlConnection();
+    }
+
     //Saves the model object
     public function create() {
-        $sql = $this->getCreateRecordSql();
-        print_r($sql);
+        $this->getInsertPreparedStatement();
     }
 
     //Updates the model object based on $filterFields and sets the value to $inputFields
@@ -44,23 +44,27 @@ class Model {
     }
 
 
-    private function getCreateRecordSql() {
+    private function getInsertPreparedStatement() {
         $sql = "INSERT INTO " . $this->tableName;
         $columnsCsv = "";
         $valuesCsv = "";
-        foreach(self::$inputFields as $inputField) {
-            $columnsCsv .= $inputField . ", ";
-            $valuesCsv .= $this->$inputField . ", ";
+        foreach($this->inputFields as $inputField) {
+            $columnsCsv .= $this->camelCaseToUnderScore($inputField) . ",";
+            $valuesCsv .=  "?" . ",";
         }
-        $columnsCsv = rtrim($columnsCsv, ",");
-        $valuesCsv = rtrim($valuesCsv, ",");
+        $columnsCsv = rtrim(trim($columnsCsv, ','));
+        $valuesCsv =  rtrim($valuesCsv, ',');
         $sql .= "(" . $columnsCsv . ")" . " VALUES " . "(" . $valuesCsv . ")";
-        //print_r($sql);
-        return $sql;
+        $preparedStatement = self::$dbConnection->prepare($sql);
+        return $preparedStatement;
     }
 
-    private function camelCaseToUnderScore($text) {
-
+    private function camelCaseToUnderScore($input) {
+        preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $input, $matches);
+        $ret = $matches[0];
+        foreach ($ret as &$match) {
+            $match = $match == strtoupper($match) ? strtolower($match) : lcfirst($match);
+        }
+        return implode('_', $ret);
     }
-
 } //class
