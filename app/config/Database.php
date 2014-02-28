@@ -5,7 +5,7 @@ require_once 'Application.php';
 class Database {
     private static $localDbConfig = array(
             'host' => '127.0.0.1',
-            'database' => 'link_analyzer2',
+            'database' => 'umanly',
             'username' => 'root',
             'password' => 'root');
 
