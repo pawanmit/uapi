@@ -14,9 +14,8 @@ class MySqlConnection {
         //echo self::$mysqli->host_info . "\n";
     }//construct
 
-    public function execute($sql, $bindParam) {
-        print_r($sql . "<BR>");
-        $statement = $this->prepareStatement($sql);
+    public function execute($bindParam) {
+        $statement = $this->prepareStatement($bindParam->getSql());
         $this->bindAndExecute($statement, $bindParam);
     }
 
@@ -50,9 +49,10 @@ class MySqlConnection {
     }
 
     private function bindAndExecute($statement, $bindParam) {
-        call_user_func_array( array($statement, 'bind_param'), $bindParam->get());
+        call_user_func_array( array($statement, 'bind_param'), $bindParam->getParameters());
         if (!$statement->execute()) {
-            echo "Execute failed: (" . $statement->errno . ") " . $statement->error;
+            error_log("Execute failed: (" . $statement->errno . ") " . $statement->error);
+            throw new Exception('Error executing sql');
         }
     }
 

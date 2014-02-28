@@ -13,33 +13,26 @@ class MySqliHelper {
     }
 
     public function insert($model) {
-        $insertSql = self::getInsertPreparedStatementSql($model);
         $bindParameter = self::getBindParameter($model);
-        self::$dbConnection->execute($insertSql,$bindParameter);
-    }
-
-    private static function getInsertPreparedStatementSql($model) {
-        $sql = "INSERT INTO " . $model->tableName;
-        $columnsCsv = "";
-        $valuesCsv = "";
-        foreach($model->inputFields as $inputField) {
-            $columnsCsv .= self::camelCaseToUnderScore($inputField) . ",";
-            $valuesCsv .=  "?" . ",";
-        }
-        $columnsCsv = rtrim(trim($columnsCsv, ','));
-        $valuesCsv =  rtrim($valuesCsv, ',');
-        $sql .= "(" . $columnsCsv . ")" . " VALUES " . "(" . $valuesCsv . ")";
-        return $sql;
+        self::$dbConnection->execute($bindParameter);
     }
 
     private static function getBindParameter($model) {
+        $insertSql = "INSERT INTO " . $model->tableName;
+        $columnsCsv = "";
+        $valuesCsv = "";
         $bindParam = new BindParam();
         foreach($model->inputFields as $inputField) {
+            $columnsCsv .= self::camelCaseToUnderScore($inputField) . ",";
+            $valuesCsv .=  "?" . ",";
             $modelProperty = $model->$inputField;
             $type = self::getParameterType($modelProperty['type']);
             $bindParam->add($type, $modelProperty['value']);
         }
-        //var_dump($bindParam->get());
+        $columnsCsv = rtrim(trim($columnsCsv, ','));
+        $valuesCsv =  rtrim($valuesCsv, ',');
+        $insertSql .= "(" . $columnsCsv . ")" . " VALUES " . "(" . $valuesCsv . ")";
+        $bindParam->setSql($insertSql);
         return $bindParam;
     }
 

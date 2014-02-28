@@ -2,19 +2,27 @@
 
 class BindParam{
 
-    private $values = array(), $types = '';
+    private $values = array(), $types = '', $sql='';
 
     public function add( $type, $value ){
         $this->values[] = $value;
         $this->types .= $type;
     }
 
-    public function get(){
+    public function getParameters(){
         $bindParmeters = array();
         $bindParmeters[] = & $this->types;
         for($count=0; $count < (count($this->values)); $count++) {
             $bindParmeters[] =  & $this->values[$count];
         }
         return $bindParmeters;
+    }
+
+    public function getSql() {
+        return $this->sql;
+    }
+
+    public function setSql($sql) {
+        $this->sql = $sql;
     }
 }
