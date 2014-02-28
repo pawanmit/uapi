@@ -1,8 +1,7 @@
 <?php
 
-require_once '../../app/config/Database.php';
-
-//Connection::getDatabaseConnection();
+global $DEPLOYMENT_DIRECTORY;
+require_once $DEPLOYMENT_DIRECTORY . '/app/config/Database.php';
 
 class Connection {
 
