@@ -1,6 +1,6 @@
 <?php
 
-require_once 'mysql/Model.php';
+require_once 'Model.php';
 
 class User extends Model{
 
@@ -12,6 +12,7 @@ class User extends Model{
     public $password;
 
     function __construct() {
+        parent::__construct();
         $this->tableName = 'user';
     }
 }
