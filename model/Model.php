@@ -32,7 +32,7 @@ class Model {
 
     //Updates the model object based on $filterFields and sets the value to $inputFields
     public function update() {
-        //
+        self::$mySqliHelper->update($this);
     }
 
     //Finds the model object and returns an array of std objects
