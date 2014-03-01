@@ -15,8 +15,8 @@ class MySqlConnection {
     }//construct
 
     public function execute($bindParam) {
-        $statement = $this->prepareStatement($bindParam->getSql());
-        $this->bindAndExecute($statement, $bindParam);
+        $statement = self::prepareStatement($bindParam->getSql());
+        self::bindAndExecute($statement, $bindParam);
     }
 
     private static function createMySqlConnection() {
@@ -28,8 +28,8 @@ class MySqlConnection {
             $mysqli = new mysqli($host, $username, $password, $database);
 
         if ($mysqli->connect_errno) {
+            self::handleException($mysqli->connect_error);
             error_log($mysqli->connect_error);
-            throw new Exception("Error connection to database host with username and password");
         }
         self::$mysqli = $mysqli;
     }
@@ -39,7 +39,8 @@ class MySqlConnection {
      * @param $sql
      * @throws Exception
      */
-    private function prepareStatement($sql) {
+
+    private static function prepareStatement($sql) {
         $preparedStatement = null;
         if (!($preparedStatement = self::$mysqli->prepare($sql))) {
             error_log("Prepare failed: (" . self::$mysqli->errno . ") " . self::$mysqli->error);
@@ -48,13 +49,22 @@ class MySqlConnection {
         return $preparedStatement;
     }
 
-    private function bindAndExecute($statement, $bindParam) {
-        call_user_func_array( array($statement, 'bind_param'), $bindParam->getParameters());
+    private static function bindAndExecute($statement, $bindParam) {
+        try {
+            call_user_func_array( array($statement, 'bind_param'), $bindParam->getParameters());
+        }catch (Exception $e) {
+            $errorMessage = "Binding failed: (" . $statement->errno . ") " . $statement->error;
+            self::handleException($errorMessage);
+        }
         if (!$statement->execute()) {
-            error_log("Execute failed: (" . $statement->errno . ") " . $statement->error);
-            throw new Exception('Error executing sql');
+            $errorMessage = "Execute failed: (" . $statement->errno . ") " . $statement->error;
+            self::handleException($errorMessage);
         }
     }
 
+    private static function handleException($errorMessage) {
+        error_log($errorMessage);
+        throw new Exception($errorMessage);
+    }
 
 }
