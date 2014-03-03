@@ -27,8 +27,8 @@ class MySqliHelper {
     public function select($model){
         $bindParameter = self::getBindParameter($model);
         $bindParameter->setSql(self::getSelectQuery($model));
-        $result = self::$dbConnection->execute($bindParameter);
-        //var_dump($result->fetch_all());
+        $result = self::$dbConnection->query($bindParameter);
+        return $result;
     }
 
     private static function getBindParameter($model) {

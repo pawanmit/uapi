@@ -17,6 +17,31 @@ class MySqlConnection {
     public function execute($bindParam) {
         $statement = self::prepareStatement($bindParam->getSql());
         self::bindAndExecute($statement, $bindParam);
+        $statement->close();
+    }
+
+    public function query($bindParam) {
+        $statement = self::prepareStatement($bindParam->getSql());
+        self::bindAndExecute($statement, $bindParam);
+        $results = self::getResults($statement);
+        $statement->close();
+        return $results;
+    }
+
+    private static function getResults($statement) {
+        $meta = $statement->result_metadata();
+        while ($field = $meta->fetch_field()) {
+            $params[] = &$row[$field->name];
+        }
+        call_user_func_array(array($statement, 'bind_result'), $params);
+        while ($statement->fetch()) {
+            foreach($row as $key => $val)
+            {
+                $c[$key] = $val;
+            }
+            $result[] = $c;
+        }
+        return $result;
     }
 
     private static function createMySqlConnection() {
