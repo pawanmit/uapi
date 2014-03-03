@@ -7,7 +7,7 @@ class Database {
             'host' => '127.0.0.1',
             'database' => 'umanly',
             'username' => 'root',
-            'password' => 'root');
+            'password' => 'mysql');
 
 
     public static function getDatabaseConfig() {
