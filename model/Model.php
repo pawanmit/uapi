@@ -37,7 +37,7 @@ class Model {
 
     //Finds the model object and returns an array of std objects
     public function find() {
-        //
+        self::$mySqliHelper->select($this);
     }
 
     //Deletes the model from database table
