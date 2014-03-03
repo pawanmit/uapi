@@ -24,6 +24,13 @@ class MySqliHelper {
         self::$dbConnection->execute($bindParameter);
     }
 
+    public function select($model){
+        $bindParameter = self::getBindParameter($model);
+        $bindParameter->setSql(self::getSelectQuery($model));
+        $result = self::$dbConnection->execute($bindParameter);
+        //var_dump($result->fetch_all());
+    }
+
     private static function getBindParameter($model) {
         $bindParam = new BindParam();
         foreach($model->inputFields as $inputField) {
@@ -71,6 +78,27 @@ class MySqliHelper {
         $updateSql = rtrim($updateSql, ",");
         echo $updateSql;
         return $updateSql;
+    }
+
+    private static function getSelectQuery($model) {
+        $selectSql = "SELECT ";
+        if ( isset ($model->selectFields) && count($model->selectFields) > 0) {
+            foreach($model->selectFields as $selectField) {
+                $selectSql .=  $selectField . ",";
+            }
+        } else {
+            $selectSql .= '* ';
+        }
+        $selectSql = rtrim($selectSql, ",");
+        $selectSql .= " FROM " . $model->tableName;
+        if ( isset ($model->filterFields) && count($model->filterFields) > 0) {
+            $selectSql .= " WHERE ";
+            foreach($model->filterFields as $filterField) {
+                $selectSql .= $filterField . '=?,';
+            }
+        }
+        $selectSql = rtrim($selectSql, ",");
+        return $selectSql;
     }
 
     private static function getParameterType($fieldType) {
