@@ -55,8 +55,10 @@ class MySqliHelper {
 
     private static function getUpdateQuery($model) {
         $updateSql = "UPDATE " . $model->tableName . ' SET ';
-        foreach($model->inputFields as $inputField) {
-            $updateSql .= $inputField . '=?,';
+        if ( isset ($model->inputFields) && count($model->inputFields) > 0) {
+            foreach($model->inputFields as $inputField) {
+                $updateSql .= $inputField . '=?,';
+            }
         }
         $updateSql = rtrim($updateSql, ",");
 
