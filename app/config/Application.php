@@ -1,6 +1,6 @@
 <?php
 
-$DEPLOYMENT_DIRECTORY = '/Applications/AMPPS/www/umanly';
+$DEPLOYMENT_DIRECTORY = '/Users/pmittal/workspace/umanly';
 
 function setEnvironment() {
     global $DEPLOYMENT_DIRECTORY;
