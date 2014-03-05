@@ -17,8 +17,6 @@ class Model {
     //List of fields for WHERE clause
     public $filterFields = array();
 
-    private static $dbConnection;
-
     private static $mySqliHelper;
 
     function __construct() {

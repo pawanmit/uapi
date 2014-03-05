@@ -5,7 +5,7 @@ require_once $DEPLOYMENT_DIRECTORY . '/app/config/Database.php';
 
 class MySqlConnection {
 
-    private static $mysqli = null;
+    private static $mysqli = NULL;
 
     function __construct() {
         //if ( self::$mysqli != null ) {
@@ -45,18 +45,20 @@ class MySqlConnection {
     }
 
     private static function createMySqlConnection() {
-            $dbCondig = Database::getDatabaseConfig();
-            $host = $dbCondig['host'];
-            $username = $dbCondig['username'];
-            $password = $dbCondig['password'];
-            $database = $dbCondig['database'];
-            $mysqli = new mysqli($host, $username, $password, $database);
+        if (self::$mysqli == NULL ) {
+                $dbCondig = Database::getDatabaseConfig();
+                $host = $dbCondig['host'];
+                $username = $dbCondig['username'];
+                $password = $dbCondig['password'];
+                $database = $dbCondig['database'];
+                $mysqli = new mysqli($host, $username, $password, $database);
 
-        if ($mysqli->connect_errno) {
-            self::handleException($mysqli->connect_error);
-            error_log($mysqli->connect_error);
+            if ($mysqli->connect_errno) {
+                self::handleException("Database Exception" . $mysqli->connect_error);
+                error_log($mysqli->connect_error);
+            }
+            self::$mysqli = $mysqli;
         }
-        self::$mysqli = $mysqli;
     }
 
     /**

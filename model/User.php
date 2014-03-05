@@ -2,7 +2,7 @@
 
 require_once 'Model.php';
 
-class User extends Model{
+class User extends Model {
 
 
     public $id = array('value'=>'', 'type'=>'string', 'length'=> 25);
