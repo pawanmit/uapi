@@ -32,14 +32,4 @@ class UserController {
         print_r($result);
     }
 
-
-}
-
-
-$userController = new UserController();
-try {
-    //$userController->create();
-    $userController->select();
-}catch (Exception $e) {
-    echo $e->getMessage();
 }
