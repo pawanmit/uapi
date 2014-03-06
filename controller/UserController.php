@@ -1,34 +1,45 @@
 <?php
 
-require_once '../app/config/Application.php';
 require_once '../model/User.php';
 
 class UserController {
 
-    public function create() {
+    public function post() {
         $user = new User();
-        $user->lastName['value'] = 'mittal';
-        $user->firstName['value'] = 'pawan';
-        $user->login['value'] = "pmittal";
-        $user->inputFields = array('lastName', 'firstName', 'login');
+        $user->last_name['value'] = 'carson';
+        $user->first_name['value'] = 'timmy';
+        $user->login['value'] = "tcarson";
+        $user->inputFields = array('last_name', 'first_name', 'login');
         $user->create();
     }
 
-    public function update() {
+    public function put() {
         $user = new User();
-        $user->lastName['value'] = 'Aggarwal1';
-        $user->firstName['value'] = 'Pawan1';
-        $user->login['value'] = "anamikaa";
-        $user->inputFields = array('lastName');
-        $user->filterFields = array('firstName');
+        $user->last_name['value'] = 'Mittal';
+        $user->first_name['value'] = 'timmy';
+        //$user->login['value'] = "anamikaa";
+        $user->inputFields = array('last_name');
+        $user->filterFields = array('first_name');
         $user->update();
     }
+
+    public function get() {
+        $user = new User();
+        $user->selectFields = array('last_name', 'login');
+        $user->first_name['value'] = 'timmy';
+        $user->filterFields = array('first_name');
+        $result = $user->find();
+        print_r($result);
+    }
+
+
 }
 
 
 $userController = new UserController();
 try {
-    $userController->update();
+    //$userController->create();
+    $userController->select();
 }catch (Exception $e) {
     echo $e->getMessage();
 }
