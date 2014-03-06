@@ -12,17 +12,29 @@ class RequestHandler {
             $responseObject->code = 404;
             $responseObject->message = "Resource not found: " . $path;
             self::createAndSendHttpResponse($responseObject);
-            error_log("Resource not found: " . $path);
         }
-        $controller->select();
+
+        if (! method_exists($controller, $method)) {
+            $responseObject = new stdClass();
+            $responseObject->code = 405;
+            $responseObject->message = $method . " not supported by resource:" . $path;
+            self::createAndSendHttpResponse($responseObject);
+        }
+
     }
 
     private static function createAndSendHttpResponse($responseObject) {
-        HttpResponse::status($responseObject->code);
-        HttpResponse::setContentType('text/json');
-        HttpResponse::setData(json_encode($responseObject));
+        http_send_status($responseObject->code);
+        http_send_content_type('text/json');
+        http_send_data(json_encode($responseObject));
+    }
+    private static function isMethodSupported($controller, $method) {
+
     }
 }
 
+
+
+//HttpResponse::setCacheControl('public');
 $method = $_SERVER['REQUEST_METHOD'];
 RequestHandler::handleRequest($_SERVER['REQUEST_URI'], $method);
