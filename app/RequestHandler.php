@@ -21,6 +21,14 @@ class RequestHandler {
             self::createAndSendHttpResponse($responseObject);
         }
 
+        try {
+            $controller->{$method}();
+        } catch (Exception $e) {
+            $responseObject = new stdClass();
+            $responseObject->code = 500;
+            $responseObject->message = $e->getMessage();
+            self::createAndSendHttpResponse($responseObject);
+        }
     }
 
     private static function createAndSendHttpResponse($responseObject) {

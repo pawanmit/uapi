@@ -3,6 +3,10 @@
 global $DEPLOYMENT_DIRECTORY;
 require_once $DEPLOYMENT_DIRECTORY . '/app/config/Database.php';
 
+//define("MYSQL_CONN_ERROR", "Unable to connect to database.");
+
+mysqli_report(MYSQLI_REPORT_STRICT);
+
 class MySqlConnection {
 
     private static $mysqli = NULL;
