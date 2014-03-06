@@ -32,7 +32,7 @@ class MySqlConnection {
         return $results;
     }
 
-    private static function getResults($statement) {
+    private static function getResultsCustom($statement) {
         $meta = $statement->result_metadata();
         while ($field = $meta->fetch_field()) {
             $params[] = &$row[$field->name];
@@ -46,6 +46,15 @@ class MySqlConnection {
             $result[] = $c;
         }
         return $result;
+    }
+
+    private static function getResults($statement) {
+        $result = $statement->get_result();
+        $output = array();
+        while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
+            array_push($output, $row);
+        }
+        return $output;
     }
 
     private static function createMySqlConnection() {
