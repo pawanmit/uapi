@@ -29,7 +29,24 @@ class UserController {
         $user->first_name['value'] = 'timmy';
         $user->filterFields = array('first_name');
         $result = $user->find();
-        print_r($result);
+        $users = self::normalizeOutput($result);
+        return (json_encode($users));
+        //return(($result));
+    }
+
+    private static function normalizeOutput($result) {
+        $users = array();
+        $output = array();
+        foreach($result as $row) {
+            $user = array();
+            foreach($row as $fieldName => $fieldValue) {
+                $user[$fieldName] = $fieldValue;
+            }
+            $users['user'] = $user;
+            array_push($output, $users);
+        }
+        return $output;
+
     }
 
 }

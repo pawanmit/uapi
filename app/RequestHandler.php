@@ -22,22 +22,24 @@ class RequestHandler {
         }
 
         try {
-            $controller->{$method}();
+            $output = $controller->{$method}();
         } catch (Exception $e) {
             $responseObject = new stdClass();
             $responseObject->code = 500;
             $responseObject->message = $e->getMessage();
             self::createAndSendHttpResponse($responseObject);
         }
+
+        $responseObject = new stdClass();
+        $responseObject->code = 200;
+        $responseObject->message = $output;
+        self::createAndSendHttpResponse($responseObject);
     }
 
     private static function createAndSendHttpResponse($responseObject) {
         http_send_status($responseObject->code);
         http_send_content_type('text/json');
-        http_send_data(json_encode($responseObject));
-    }
-    private static function isMethodSupported($controller, $method) {
-
+        http_send_data($responseObject->message);
     }
 }
 
