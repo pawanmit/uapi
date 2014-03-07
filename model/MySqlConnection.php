@@ -51,7 +51,7 @@ class MySqlConnection {
     private static function getResults($statement) {
         $result = $statement->get_result();
         $output = array();
-        while ($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
+        while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
             array_push($output, $row);
         }
         return $output;
