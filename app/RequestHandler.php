@@ -33,7 +33,7 @@ class RequestHandler {
 
         $responseObject = new stdClass();
         $responseObject->code = 200;
-        $responseObject->message = $output;
+        $responseObject->message = json_encode($output);
         self::createAndSendHttpResponse($responseObject);
     }
 
