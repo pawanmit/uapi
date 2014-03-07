@@ -94,10 +94,10 @@ class MySqliHelper {
         if ( isset ($model->filterFields) && count($model->filterFields) > 0) {
             $selectSql .= " WHERE ";
             foreach($model->filterFields as $filterField) {
-                $selectSql .= $filterField . '=?,';
+                $selectSql .= " " . $filterField . "=? AND";
             }
         }
-        $selectSql = rtrim($selectSql, ",");
+        $selectSql = rtrim($selectSql, "AND");
         return $selectSql;
     }
 
