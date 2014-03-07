@@ -31,23 +31,22 @@ class RequestHandler {
             self::createAndSendHttpResponse($responseObject);
         }
 
-        if ( strlen($controller->error) > 0 ) {
-            echo $controller->error;
+        if ( count($controller->errors) > 0 ) {
             $responseObject = new stdClass();
             $responseObject->code = 400;
-            $responseObject->message = $controller->error;
+            $responseObject->message = json_encode($controller->errors);
+            self::createAndSendHttpResponse($responseObject);
+        } else {
+            $responseObject = new stdClass();
+            $responseObject->code = 200;
+            $responseObject->message = json_encode($output);
             self::createAndSendHttpResponse($responseObject);
         }
-
-        $responseObject = new stdClass();
-        $responseObject->code = 200;
-        $responseObject->message = json_encode($output);
-        self::createAndSendHttpResponse($responseObject);
     }
 
     private static function createAndSendHttpResponse($responseObject) {
         http_send_status($responseObject->code);
-        //http_send_content_type('text/json');
+        http_send_content_type('text/json');
         http_send_data($responseObject->message);
     }
 }

@@ -4,7 +4,7 @@ require_once '../model/User.php';
 
 class UserController {
 
-    public $error = "";
+    public $errors = array();
     private $model;
 
     function __construct() {
@@ -23,6 +23,9 @@ class UserController {
 
     public function get() {
         $this->updateModelFromUserInput();
+        if (count( $this->errors ) > 0) {
+            return;
+        }
         $result = $this->model->find();
         $models = self::normalizeOutput($result);
         return $models;
@@ -52,6 +55,8 @@ class UserController {
                 $filterField = $this->model->$field;
                 $filterField['value'] = $value;
                 $this->model->$field = $filterField;
+            } else {
+                array_push($this->errors, $field . " is not valid");
             }
         }
 
