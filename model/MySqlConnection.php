@@ -91,7 +91,9 @@ class MySqlConnection {
 
     private static function bindAndExecute($statement, $bindParam) {
         try {
-            call_user_func_array( array($statement, 'bind_param'), $bindParam->getParameters());
+            if ( count($bindParam->getParameters()) > 0 ) {
+                call_user_func_array( array($statement, 'bind_param'), $bindParam->getParameters());
+            }
         }catch (Exception $e) {
             $errorMessage = "Binding failed: (" . $statement->errno . ") " . $statement->error;
             self::handleException($errorMessage);

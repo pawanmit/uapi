@@ -11,9 +11,11 @@ class BindParam{
 
     public function getParameters(){
         $bindParmeters = array();
-        $bindParmeters[] = & $this->types;
-        for($count=0; $count < (count($this->values)); $count++) {
-            $bindParmeters[] =  & $this->values[$count];
+        if (strlen($this->types) > 0) {
+            $bindParmeters[] = & $this->types;
+            for($count=0; $count < (count($this->values)); $count++) {
+                $bindParmeters[] =  & $this->values[$count];
+            }
         }
         return $bindParmeters;
     }
