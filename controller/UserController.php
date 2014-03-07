@@ -23,7 +23,6 @@ class UserController {
 
     public function get() {
         $this->updateModelFromUserInput();
-        //print_r($this->model->filterFields);
         $result = $this->model->find();
         $models = self::normalizeOutput($result);
         return $models;
@@ -50,7 +49,9 @@ class UserController {
         foreach($queries as $field => $value) {
             if (property_exists( get_class($this->model), $field) ) {
                 array_push($this->model->filterFields, $field);
-                $this->model->$field['value'] = '$value';
+                $filterField = $this->model->$field;
+                $filterField['value'] = $value;
+                $this->model->$field = $filterField;
             }
         }
 
