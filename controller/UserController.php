@@ -46,7 +46,23 @@ class UserController {
     }
 
     private function updateModelFromUserInput() {
+        $url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $urlParts = explode("/", $url);
+        if( count($urlParts) > 3 && strlen($urlParts[3] > 0))  {
+            $userId = $urlParts[3];
+            array_push($this->model->filterFields, 'id');
+            $this->model->id['value'] = $userId;
+        } else {
+            $this->updateModelWithQueryString();
+        }
+        //Parse query string to get the filter fields
+        //parse fields to make sure that they are valid model fields.
+        //Parse message body to make sure that it is valid json.
+        //Parse json to get field values.
+        //parse fields to make sure that they are valid model fields.
+    }
 
+    private function updateModelWithQueryString() {
         $query = new HttpQueryString();
         $queries = $query->toArray();
         foreach($queries as $field => $value) {
@@ -59,16 +75,6 @@ class UserController {
                 array_push($this->errors, $field . " is not valid");
             }
         }
-
-        //Parse query string to get the filter fields
-        //parse fields to make sure that they are valid model fields.
-        //Parse message body to make sure that it is valid json.
-        //Parse json to get field values.
-        //parse fields to make sure that they are valid model fields.
-    }
-
-    private function isValidQueryString() {
-
     }
 
 }
