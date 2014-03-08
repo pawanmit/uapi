@@ -7,7 +7,8 @@ require_once 'ClientRequest.php';
 class RequestHandler {
 
     public static function handleRequest($request) {
-        $controller = ControllerFactory::createController($request->path);
+        $url = parse_url($request->path, PHP_URL_PATH);
+        $controller = ControllerFactory::createController($url);
         if ($controller == NULL) {
             $responseObject = new stdClass();
             $responseObject->code = 404;
