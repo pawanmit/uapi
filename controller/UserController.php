@@ -12,17 +12,22 @@ class UserController {
     }
 
     public function post() {
-        $model = new User();
-        $model->last_name['value'] = 'carson';
-        $model->first_name['value'] = 'timmy';
-        $model->login['value'] = "tcarson";
-        $model->inputFields = array('last_name', 'first_name', 'login');
-        $model->create();
+        $this->updateModeForPost();
+        if (count( $this->errors ) > 0) {
+            return;
+        }
+        print_r($this->model);
+        //die;
+        if ( $this->model->id['value'] )  {
+            $this->model->update();
+        } else {
+            $this->model->create();
+        }
     }
 
 
     public function get() {
-        $this->updateModelFromUserInput();
+        $this->updateModelForGet();
         if (count( $this->errors ) > 0) {
             return;
         }
@@ -45,7 +50,7 @@ class UserController {
         return $output;
     }
 
-    private function updateModelFromUserInput() {
+    private function updateModelForGet() {
         $url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         $urlParts = explode("/", $url);
         if( count($urlParts) > 3 && strlen($urlParts[3] > 0))  {
@@ -71,6 +76,31 @@ class UserController {
                 $filterField = $this->model->$field;
                 $filterField['value'] = $value;
                 $this->model->$field = $filterField;
+            } else {
+                array_push($this->errors, $field . " is not valid");
+            }
+        }
+    }
+
+    private function updateModeForPost() {
+        $inputFieldMap = $_POST;
+        if (count($inputFieldMap) < 1) {
+            array_push($this->errors, "No user input found");
+            return;
+        }
+        $url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $urlParts = explode("/", $url);
+        if( count($urlParts) > 3 && strlen($urlParts[3] > 0))  {
+            $userId = $urlParts[3];
+            array_push($this->model->filterFields, 'id');
+            $this->model->id['value'] = $userId;
+        }
+        foreach($inputFieldMap as $field => $value) {
+            if (property_exists( get_class($this->model), $field) ) {
+                array_push($this->model->inputFields, $field);
+                $inputField = $this->model->$field;
+                $inputField['value'] = $value;
+                $this->model->$field = $inputField;
             } else {
                 array_push($this->errors, $field . " is not valid");
             }
